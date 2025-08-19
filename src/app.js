@@ -5,9 +5,22 @@ const app = express();
 //    res.send("Hello World from Express!");
 // })
 // this will match only the GET method
-app.get("/user",(req, res) => {
+// "use?r" means e is optional here so u can access /usr or /user
+// "u(se)?r" means se is optional here so u can access /ur or /user
+// "u(se)+r" means u can add as many se as u want so u can access /user or /useser or /useseser
+// "use+r" means u can add as many e as u want so u can access /user or /useer or /useeer or /useeeer etc
+// "use*r" means u can add anything between e and r so u can access /usefndsfnr 
+// REGEX
+// "/a/" means it will match the path if a is there in the url like /a or /fda or /fadffg /dggda
+// "/.*fly#/" means u can whatever you want before fly /dragonfly or /fly or /dsnffly 
+app.get("/user/:userId/:name",(req, res) => {
+   // : this colons means the route is dynamic and can change based on the userId and name
+   // console.log(req.query); // this will log the query parameters in the url like /user?name=John&age=30 
+   console.log(req.params); // this will log the parameters in the url like /user/123
+   // the above url is known as dynamic url because it can change based on the query parameters
    res.send({firstname: "John", lastname: "Doe"});
 })
+
 app.post("/user",(req, res) => {
    // here we can get the data from the request body and save it to the database
    res.send({message: "User created"});
