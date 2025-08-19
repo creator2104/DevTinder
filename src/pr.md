@@ -131,3 +131,42 @@ app.listen(3000,() =>{
 // test all methods in postman by creating a new request for each method and setting the method to GET, POST, PUT, DELETE, PATCH, OPTIONS, HEAD and setting the URL to http://localhost:3000/test and sending the request and checking the response
 
 --------------------------------------------------------3-----------------------------------------------------------
+const express = require('express');
+
+const app = express(); 
+
+// postman works as a client and express is a server
+
+// one route handler can handle multiple routes
+app.use("/user",(req,res,next)=>{
+   // this function is known as a route handler 
+   // if we dont pass anything to res.send, it will send infinite loading in postman
+   // if we do clg also it will not send anything to postman
+   // to send something to postman we need to use res.send
+   console.log("Handling user route");
+   // we cant send multiple res.send from one route handler
+   next() // this next function is used to call the next route handler
+   res.send("Hello from user route");
+},(req,res,next)=>{
+   console.log("Handling another user route");
+   // res.send("This is another route handler for user route");
+   next(); 
+   // this will throw an error because we are trying to call next in last route handler
+})
+// the ans of above code will be the first route handler 
+// if we dont send res.send in the first route handler, it will not send anything to postman and also second route handler will not be executed and go to infinite loading in postman
+
+
+app.listen(3000,() =>{
+   console.log("Server is running on port 3000");
+})
+
+
+// in short if there is no res.send then postman will get loading forever and if we send res.send one time it will executed but if we send multiple time it will throw an error because we can send only one response from one route handler and next function is used to call the next route handler in the chain
+
+// the below three are same rH means route handler or function handler
+// app.use("/user", [rH1, rH2, rH3],rH4,rH5);
+// app.use("/user",rH1,rH2,rH3,rH4,rH5);
+// app.use("/user",[rH1,rH2,rH3,rH4,rH5]); 
+
+------------------------------------------------------part 2 of 3---------------------------------------------------
