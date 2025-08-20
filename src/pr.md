@@ -162,11 +162,39 @@ app.listen(3000,() =>{
 })
 
 
-// in short if there is no res.send then postman will get loading forever and if we send res.send one time it will executed but if we send multiple time it will throw an error because we can send only one response from one route handler and next function is used to call the next route handler in the chain
+// in short if there is no res.send then postman will get loading forever and if we send res.send one time it will executed but if we send multiple time it will throw an error because we can send only one response from one route handler and next function is used to call the next route handler in the chain and if there is no res.send and next() is overthere so in postman we can see error of cant get /user 
 
 // the below three are same rH means route handler or function handler
 // app.use("/user", [rH1, rH2, rH3],rH4,rH5);
 // app.use("/user",rH1,rH2,rH3,rH4,rH5);
 // app.use("/user",[rH1,rH2,rH3,rH4,rH5]); 
 
-------------------------------------------------------part 2 of 3---------------------------------------------------
+------------------------------------------------------part 2 of 3--------------------------------------------------
+const express = require('express');
+
+const app = express();
+
+// GET/user => It checks all the app.xxx("matching route") fucntions and then it will execute the first one which matches the route and if any of the function has res.send() then it will not execute the next function in the chain and if there is no res.send() then it will execute the next function in the chain
+// so all next() functions are known as middleware functions and who sends the response is known as request handler
+app.use("/",(req, res,next)=>{
+   // res.send("Hello from Express!");
+   next();
+})
+
+app.get("/user", (req, res,next)=>{
+console.log("Handling the route user!!");
+next();
+})
+
+app.get("/user", (req, res) => {
+    console.log("Handling the route user 2!!");
+    res.send("2nd Route Handler");
+});
+
+
+
+app.listen(3000, () => {
+console.log("Server is running on port 3000");
+})
+
+------------------------------------------------------part 3 of 3---------------------------------------------------
