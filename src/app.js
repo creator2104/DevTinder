@@ -3,20 +3,20 @@ const connectDB = require("./config/database"); // Import the database connectio
 const app = express();
 const User = require("./models/user"); 
 
+// the data will come from postman in json format so we need to tell express to parse the json data into js object
+// and then we can access the data using req.body and using new instance of the User model and then we can save the data to the database using .save() method
+// body means the data that is sent from the client to the server
+app.use(express.json());
+
 app.post("/signup", async (req, res) => {
+
    // whenever we do database operations like read or write we should wrap it in a try catch block
   try {
      // create a new instance of the User model
-    const user = new User({
-      firstName: "Viraj",
-      lastName: "Patil",
-      emailId: "viraj666@gmail.com",
-      password: "12345678"
-    });
-
-    // once u creted a user instance then u can save it to the database
-    await user.save();
-    // save method returns a promise
+    const user = new User(req.body);
+   //  once u creted a user instance then u can save it to the database
+     await user.save();
+   //  save method returns a promise
     res.send("User added successfully");
   } catch (err) {
     console.error(err);
@@ -36,3 +36,6 @@ connectDB()
   .catch((err) => {
     console.error("DB connection failed", err);
   });
+
+
+// now we will pass data to the database dynamically using postman 
