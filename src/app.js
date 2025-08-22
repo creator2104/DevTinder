@@ -8,8 +8,86 @@ const User = require("./models/user");
 // body means the data that is sent from the client to the server
 app.use(express.json());
 
-app.post("/signup", async (req, res) => {
+// GET user by Email ID
+app.get("/user",async (req,res)=>{
+   try{
+    const users = await User.find({emailId: req.body.emailId})
+    if(!users){
+      res.status(404).send("User not found");
+    }
+    else{
+      res.send(users)
+    }
+   //  aisa user dhundho jiska emailId req.body.emailId ke barabar ho and then us user ko return kar do and also res.send karke postman ko bhej do
+   if(users.length===0){
+      return res.status(404).send("User not found");
+   }
+   else{
+      res.send(users)
+   }
+   }
+   catch(err){
+    res.status(400).send("Error fetching email");
+   }
+})
 
+// Feed API - GET/feed - get all users from the database
+app.get("/feed", async (req, res) => {
+try{
+   const users = await User.find({});
+   res.send(users);
+}
+catch(err){
+    res.status(400).send("Error fetching email");
+}
+});
+
+// Delete a user from the database
+app.delete("/user", async (req, res)=>{
+   const userId = req.body.userId;
+   try{
+      // const deletedUser = await User.findByIdAndDelete({_id:userId});
+      const deletedUser = await User.findByIdAndDelete(userId); 
+      if(!deletedUser){
+         return res.status(404).send("User not found");
+      }
+      res.send("User deleted successfully");
+   }
+   catch(err){
+      res.status(400).send("Error deleting user");
+   }
+
+})
+
+// UPDATE a user in the database
+app.patch("/user", async (req, res)=>{
+   const userId = req.body.userId;
+   const data = req.body
+   try{
+      await User.findByIdAndUpdate({_id: userId}, data,{returnDocument: 'before'}) 
+      // the above line will take the userId and the data that we want to update and it will update the user in the database , the returnDocument: 'before' will return the document before the update means the object before the update
+      res.send("User updated successfully");
+}
+catch(err){
+      res.status(400).send("Error updating user");
+   }
+})
+// app.get("/user/:id",async (req,res)=>{
+//    try{
+//     const users = await User.findById(req.params.id)
+//      if(!users){
+//       res.status(404).send("User not found");
+//     }
+//     else{
+//       res.send(users)
+//     }
+//    }
+//    catch(err){
+//     res.status(400).send("Error fetching email");
+//    }
+// })
+
+app.post("/signup", async (req, res) => {
    // whenever we do database operations like read or write we should wrap it in a try catch block
   try {
      // create a new instance of the User model
