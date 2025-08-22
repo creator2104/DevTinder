@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const validator = require("validator")
 // schema means the structure of the data that we want to store in the database
 const userSchema = new mongoose.Schema({
     firstName:{
@@ -13,12 +14,22 @@ const userSchema = new mongoose.Schema({
         required: true,
         lowercase: true, // this means that the emailId will be stored in lowercase in the database
         unique: true, // this means that this field should be unique and it cannot be same as any other user's emailId
-        trim: true // this means that any whitespace before or after the emailId will be removed
+        trim: true ,// this means that any whitespace before or after the emailId will be removed
+        validate(value){
+            if(!validator.isEmail(value)){
+                throw new Error("Invalid Email Address" + value)
+            }
+        }
     },
     password:{
         type: String,
         required: true,
-        minlength:6 
+        minlength:6 ,
+        validate(value){
+            if(!validator.isStrongPassword(value)){
+                throw new Error("Keep your password strong" + value)
+            }
+        }
     },
     age:{
         type: Number,
@@ -36,7 +47,12 @@ const userSchema = new mongoose.Schema({
     },
     photoUrl:{
         type: String,
-        default: "https://www.pngall.com/wp-content/uploads/5/Profile-PNG-File.png" // this means that if the user does not provide a photoUrl then this default url will be used
+        default: "https://www.pngall.com/wp-content/uploads/5/Profile-PNG-File.png", // this means that if the user does not provide a photoUrl then this default url will be used
+        validate(value){
+            if(!validator.isURL(value)){
+                throw new Error ("Invalid photo URL" + value)
+            }
+        }
     },
     about:{
         type: String,
