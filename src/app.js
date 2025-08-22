@@ -64,7 +64,11 @@ app.patch("/user", async (req, res)=>{
    const userId = req.body.userId;
    const data = req.body
    try{
-      await User.findByIdAndUpdate({_id: userId}, data,{returnDocument: 'before'}) 
+      await User.findByIdAndUpdate({_id: userId}, data,{
+         returnDocument: 'before',
+         runValidators: true
+         // runValidators is used when we are updating the user and we want to validate the data that we are updating so when we update the age while updating the user it will work otherwise it will work only while new document will created 
+      }) 
       // the above line will take the userId and the data that we want to update and it will update the user in the database , the returnDocument: 'before' will return the document before the update means the object before the update
       res.send("User updated successfully");
 }
