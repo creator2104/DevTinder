@@ -5,9 +5,11 @@ const userSchema = new mongoose.Schema({
     firstName:{
         type: String,
         required: true, // this means that this field is required and it cannot be empty
+        trim: true 
     },
     lastName:{
-        type: String
+        type: String,
+        trim: true
     },
     emailId:{
         type: String,
@@ -23,6 +25,7 @@ const userSchema = new mongoose.Schema({
     },
     password:{
         type: String,
+        trim:true,
         required: true,
         minlength:6 ,
         validate(value){
@@ -33,10 +36,12 @@ const userSchema = new mongoose.Schema({
     },
     age:{
         type: Number,
+        trim:true,
         min:18 // minimum age should be 18
     },
     gender:{
        type: String,
+       trim:true,
        // the below func is named as custom validator 
        validate(value){
         if(!["male","female","other"].includes(value)){
@@ -47,6 +52,7 @@ const userSchema = new mongoose.Schema({
     },
     photoUrl:{
         type: String,
+        trim:true,
         default: "https://www.pngall.com/wp-content/uploads/5/Profile-PNG-File.png", // this means that if the user does not provide a photoUrl then this default url will be used
         validate(value){
             if(!validator.isURL(value)){
@@ -56,6 +62,7 @@ const userSchema = new mongoose.Schema({
     },
     about:{
         type: String,
+        trim:true,
         maxLength: 500 ,// this means that the maximum length of this field can be 500 characters
         default: "Hello! I am using DevTinder" 
     },

@@ -2,6 +2,8 @@ const express = require("express");
 const connectDB = require("./config/database"); // Import the database connectionn
 const app = express();
 const User = require("./models/user");
+const { validateSignUpData } = require("./utils/validation");
+const bcrypt = require("bcrypt");
 
 // the data will come from postman in json format so we need to tell express to parse the json data into js object
 // and then we can access the data using req.body and using new instance of the User model and then we can save the data to the database using .save() method
@@ -96,11 +98,18 @@ app.patch("/user/:userId", async (req, res) => {
 // })
 
 app.post("/signup", async (req, res) => {
+   try {
+   // 1. validation of data
+      validateSignUpData(req);
+      const { firstName, lastName, emailId} = req.body;
+   // 2. Encrypt your password then store it into database 
+      const hashedPassword = await bcrypt.hash(req.body.password, 10); 
+      console.log(hashedPassword);
+
   // whenever we do database operations like read or write we should wrap it in a try catch block
-  try {
-    // create a new instance of the User model
-    const user = new User(req.body);
-    //  once u creted a user instance then u can save it to the database
+  // create a new instance of the User model
+  const user = new User({firstName,lastName,emailId,password:hashedPassword});
+  //  once u creted a user instance then u can save it to the database
     await user.save();
     //  save method returns a promise
     res.send("User added successfully");
@@ -109,6 +118,8 @@ app.post("/signup", async (req, res) => {
     res.status(500).send("Error saving user");
   }
 });
+
+
 
 connectDB()
   .then(() => {
